@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<assemblies timestamp="03/20/2021 11:54:10">
+  <assembly name="C:\Devl\experiments\945651dd-e4fa-42f9-b85c-bc498be3cd70\NewsFeedService.Tests\bin\Debug\netcoreapp3.0\NewsFeedService.Tests.dll" run-date="2021-03-20" run-time="11:54:10" total="2" passed="1" failed="1" skipped="0" time="13.670" errors="0">
+    <errors />
+    <collection total="2" passed="1" failed="1" skipped="0" name="Test collection for NewsFeedService.Tests.IntegrationTests" time="13.670">
+      <test name="NewsFeedService.Tests.IntegrationTests.Test1" type="NewsFeedService.Tests.IntegrationTests" method="Test1" time="5.4386364" result="Fail">
+        <failure>
+          <message>Expected sw.ElapsedMilliseconds to be less than 2000L, but found 2010L.</message>
+          <stack-trace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`1.BeLessThan(T expected, String because, Object[] becauseArgs)
+   at NewsFeedService.Tests.IntegrationTests.Test1() in C:\Devl\experiments\945651dd-e4fa-42f9-b85c-bc498be3cd70\NewsFeedService.Tests\IntegrationTests.cs:line 76
+--- End of stack trace from previous location where exception was thrown ---</stack-trace>
+        </failure>
+        <traits />
+      </test>
+      <test name="NewsFeedService.Tests.IntegrationTests.Test2" type="NewsFeedService.Tests.IntegrationTests" method="Test2" time="8.2317382" result="Pass">
+        <traits />
+      </test>
+    </collection>
+  </assembly>
+</assemblies>
