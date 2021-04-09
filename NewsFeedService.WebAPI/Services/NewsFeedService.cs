@@ -21,55 +21,39 @@ namespace NewsFeedService.WebAPI.Services
 
         public async Task<IEnumerable<NewsFeedItem>> Get(int[] ids, Filters filters)
         {
-            IQueryable<NewsFeedItem> newsItems;
+
+
+            var newsItems = _newsFeedContext.NewsFeedItems.AsQueryable();
+
+            if (filters == null)
+                filters = new Filters();
+
+            if (filters.Body != null && filters.Body.Any())
+                newsItems = newsItems.Where(x => filters.Body.Contains(x.Body));
+
+            if (filters.AuthorNames != null && filters.AuthorNames.Any())
+                newsItems = newsItems.Where(x => filters.AuthorNames.Contains(x.AuthorName));
+
+            if (filters.Title != null && filters.Title.Any())
+                newsItems = newsItems.Where(x => filters.Title.Contains(x.Title));
+
             if (ids != null && ids.Any())
-            {
-                newsItems = _newsFeedContext.NewsFeedItems.AsQueryable();
                 newsItems = newsItems.Where(x => ids.Contains(x.Id));
-                return await newsItems.ToListAsync();
-            }
-            
-            // if value is not cached
-            if (!_memoryCache.TryGetValue("NewsItems", out newsItems))
-            {
-                newsItems = _newsFeedContext.NewsFeedItems.AsQueryable();
 
-                if (filters == null)
-                    filters = new Filters();
+            await Task.Delay(2000);
 
-                if (filters.Body != null && filters.Body.Any())
-                    newsItems = newsItems.Where(x => filters.Body.Contains(x.Body));
 
-                if (filters.AuthorNames != null && filters.AuthorNames.Any())
-                    newsItems = newsItems.Where(x => filters.AuthorNames.Contains(x.AuthorName));
-
-                if (filters.Title != null && filters.Title.Any())
-                    newsItems = newsItems.Where(x => filters.Title.Contains(x.Title));
-
-                /*if (ids != null && ids.Any())
-                    newsItems = newsItems.Where(x => ids.Contains(x.Id));*/
-
-                await Task.Delay(2000);
-
-                var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetSize(4)
-                    .SetSlidingExpiration(TimeSpan.FromDays(1))
-                    .SetAbsoluteExpiration(TimeSpan.FromDays(7));
-                _memoryCache.Set("NewsItems", newsItems, cacheOptions);
-                return await newsItems.ToListAsync();
-            }
-
-            return await _memoryCache.Get<IQueryable<NewsFeedItem>>("NewsItems").ToListAsync();
+            return await newsItems.ToListAsync();
 
 
         }
 
         public async Task<NewsFeedItem> Add(NewsFeedItem newsFeedItem)
         {
-            if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
+            /*if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
             {
                 _memoryCache.Remove("NewsItems");
-            }
+            }*/
             await _newsFeedContext.NewsFeedItems.AddAsync(newsFeedItem);
             newsFeedItem.DateCreated = DateTime.UtcNow;
 
@@ -87,10 +71,10 @@ namespace NewsFeedService.WebAPI.Services
         public async Task<NewsFeedItem> Update(NewsFeedItem newsFeedItem)
         {
 
-            if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
+            /*if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
             {
                 _memoryCache.Remove("NewsItems");
-            }
+            }*/
 
             var newsItemForChanges = await _newsFeedContext.NewsFeedItems.SingleAsync(x => x.Id == newsFeedItem.Id);
             newsItemForChanges.Body = newsFeedItem.Body;
@@ -104,10 +88,10 @@ namespace NewsFeedService.WebAPI.Services
 
         public async Task<bool> Delete(NewsFeedItem newsFeedItem)
         {
-            if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
+            /*if (_memoryCache.TryGetValue("NewsItems", out IQueryable<NewsFeedItem> newsItems))
             {
                 _memoryCache.Remove("NewsItems");
-            }
+            }*/
 
             _newsFeedContext.NewsFeedItems.Remove(newsFeedItem);
             await _newsFeedContext.SaveChangesAsync();
@@ -131,8 +115,11 @@ namespace NewsFeedService.WebAPI.Services
 
     public class Filters
     {
+        //You can use HashCode to combine multiple values (for example, fields on a structure or class) into a single hash code.
         public string[] Body { get; set; }
         public string[] AuthorNames { get; set; }
         public string[] Title { get; set; }
+
+        
     }
 }
